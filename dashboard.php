@@ -1,68 +1,111 @@
 <?php
 require_once 'session.php';
 require_once 'database.php';
-requireLogin();
 
-$stmt = $pdo->query("SELECT * FROM categories");
-$categories = $stmt->fetchAll();
+$posts_query = "
+    SELECT 
+        p.*,
+        u.username,
+        c.name as category_name,
+        COUNT(DISTINCT com.id) as comment_count
+    FROM posts p
+    JOIN users u ON p.user_id = u.id
+    JOIN categories c ON p.category_id = c.id
+    LEFT JOIN comments com ON p.id = com.post_id
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+    LIMIT 5
+";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && isset($_POST['category_id'])) {
-        switch ($_POST['action']) {
-            case 'create':
-                $stmt = $pdo->prepare("INSERT INTO posts (user_id, category_id, title, content) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$_SESSION['user_id'], $_POST['category_id'], $_POST['title'], $_POST['content']]);
-                break;
-        }
-    }
-}
+$news_query = "
+    SELECT 
+        n.*,
+        u.username as author
+    FROM news n
+    JOIN users u ON n.author_id = u.id
+    ORDER BY n.created_at DESC
+    LIMIT 3
+";
 
-$stmt = $pdo->prepare("
-    SELECT posts.*, categories.name as category_name 
-    FROM posts 
-    JOIN categories ON posts.category_id = categories.id 
-    WHERE posts.user_id = ? 
-    ORDER BY created_at DESC
-");
-$stmt->execute([$_SESSION['user_id']]);
-$posts = $stmt->fetchAll();
-
-include 'header.php';
+$posts = $pdo->query($posts_query)->fetchAll();
+$news = $pdo->query($news_query)->fetchAll();
 ?>
-<div class="container">
-    <h1>Dashboard</h1>
-    
-    <form method="POST">
-        <input type="hidden" name="action" value="create">
-        <div class="form-group">
-            <label>Title: <input type="text" name="title" required></label>
-        </div>
-        <div class="form-group">
-            <label>Category:
-                <select name="category_id" required>
-                    <option value="">Select Category</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?php echo $category['id']; ?>">
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-        </div>
-        <div class="form-group">
-            <label>Content: <textarea name="content" required></textarea></label>
-        </div>
-        <button type="submit">Create Post</button>
-    </form>
 
-    <div class="posts">
-        <h2>Your Posts</h2>
-        <?php foreach ($posts as $post): ?>
-            <div class="post">
-                <h3><?php echo htmlspecialchars($post['title']); ?></h3>
-                <p><?php echo htmlspecialchars($post['content']); ?></p>
-                <p>Category: <?php echo htmlspecialchars($post['category_name']); ?></p>
-            </div>
-        <?php endforeach; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Motorsport Community Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <?php include 'header.php'; ?>
+    
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Motorsport Community Hub</h1>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="dashboard-actions">
+                    <a href="create_post.php" class="action-btn">Create Post</a>
+                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
+                        <a href="create_news.php" class="action-btn">Create News</a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="dashboard-grid">
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>Latest News</h2>
+                    <a href="news.php" class="view-all">View All News</a>
+                </div>
+                <div class="news-cards">
+                    <?php foreach ($news as $article): ?>
+                        <article class="news-card">
+                            <?php if (!empty($article['image_url'])): ?>
+                                <img src="<?= htmlspecialchars($article['image_url']) ?>" 
+                                     alt="<?= htmlspecialchars($article['title']) ?>" 
+                                     class="news-image">
+                            <?php endif; ?>
+                            <div class="news-content">
+                                <h3><?= htmlspecialchars($article['title']) ?></h3>
+                                <p class="news-meta">
+                                    By <?= htmlspecialchars($article['author']) ?> 
+                                    on <?= date('F j, Y', strtotime($article['created_at'])) ?>
+                                </p>
+                                <a href="news_article.php?id=<?= $article['id'] ?>" class="read-more">Read More</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
+            <section class="forum-section">
+                <div class="section-header">
+                    <h2>Recent Forum Posts</h2>
+                    <a href="forums.php" class="view-all">View All Posts</a>
+                </div>
+                <?php foreach ($posts as $post): ?>
+                    <div class="forum-post-card">
+                        <h3>
+                            <a href="post.php?id=<?= $post['id'] ?>">
+                                <?= htmlspecialchars($post['title']) ?>
+                            </a>
+                        </h3>
+                        <p class="post-meta">
+                            Posted by <?= htmlspecialchars($post['username']) ?>
+                            in <?= htmlspecialchars($post['category_name']) ?>
+                            • <?= $post['comment_count'] ?> comments
+                        </p>
+                        <div class="post-preview">
+                            <?= nl2br(htmlspecialchars(substr($post['content'], 0, 150))) ?>...
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </section>
+        </div>
     </div>
-</div>
+</body>
+</html>

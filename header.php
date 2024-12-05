@@ -13,23 +13,24 @@ require_once 'session.php';
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/style.css">
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="logo">
-                <a href="<?php echo BASE_URL; ?>/dashboard.php">Motorsport Community Hub</a>
-            </div>
-            <div class="nav-links">
-                <a href="<?php echo BASE_URL; ?>/dashboard.php">Home</a>
-                <a href="<?php echo BASE_URL; ?>/news.php">News</a>
-                <a href="<?php echo BASE_URL; ?>/forums.php">Forums</a>
-                <?php if (isLoggedIn()): ?>
-                    <a href="<?php echo BASE_URL; ?>/profile.php">Profile</a>
-                    <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                    <a href="<?php echo BASE_URL; ?>/logout.php">Logout</a>
-                <?php else: ?>
-                    <a href="<?php echo BASE_URL; ?>/login.php">Login</a>
-                    <a href="<?php echo BASE_URL; ?>/register.php">Register</a>
-                <?php endif; ?>
-            </div>
+<nav>
+    <div class="nav-container">
+        <a href="dashboard.php" class="site-title">Motorsport Community Hub</a>
+        
+        <div class="nav-links">
+            <a href="dashboard.php">Home</a>
+            <a href="news.php">News</a>
+            <a href="forums.php">Forums</a>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <a href="profile.php">Profile</a>
+                <div class="user-section">
+                    <span class="welcome-text">Welcome, <?= htmlspecialchars($_SESSION['username']) ?></span>
+                    <a href="logout.php">Logout</a>
+                </div>
+            <?php else: ?>
+                <a href="login.php">Login</a>
+                <a href="register.php">Register</a>
+            <?php endif; ?>
         </div>
-    </nav>
+    </div>
+</nav>
