@@ -1,40 +1,50 @@
-:root {
-    --primary-color: #e10600;
-    --secondary-color: #1e1e1e;
-    --text-color: #333;
-    --light-bg: #f4f4f4;
-}
-
 body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
     line-height: 1.6;
-    color: var(--text-color);
 }
 
-.nav-container {
+.container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 20px;
 }
 
 nav {
-    background-color: var(--secondary-color);
-    color: white;
+    background-color: #333;
+    padding: 1rem;
 }
 
 .nav-links a {
     color: white;
     text-decoration: none;
     padding: 0.5rem 1rem;
-    margin: 0 0.25rem;
 }
 
-.nav-links a:hover {
-    background-color: var(--primary-color);
-    border-radius: 4px;
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.error {
+    color: red;
+    margin-bottom: 1rem;
+}
+
+.post, .news-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
 }

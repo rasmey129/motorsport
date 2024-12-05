@@ -16,7 +16,7 @@ function isAdmin() {
 function requireLogin() {
     if (!isLoggedIn()) {
         $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
-        header('Location: /login.php');
+        header('Location: ' . BASE_URL . '/login.php');     
         exit();
     }
 }

@@ -1,6 +1,8 @@
 <?php
 require_once 'session.php';
+
 ?>
+<script src="main.js"></script>
 
 <!DOCTYPE html>
 <html lang="en">

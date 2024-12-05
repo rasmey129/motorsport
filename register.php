@@ -14,69 +14,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $pdo->lastInsertId();
         $_SESSION['username'] = $username;
         
-        header('Location: ' . BASE_URL . '/dashboard.php');        exit();
+        header('Location: dashboard.php');
+        exit();
     } catch (PDOException $e) {
         $error = 'Registration failed. Email or username may already exist.';
     }
 }
+
+include 'header.php';
 ?>
-
-<?php include 'header.php'; ?>
-
 <div class="container">
     <h1>Register</h1>
     <?php if (isset($error)): ?>
         <div class="error"><?php echo $error; ?></div>
     <?php endif; ?>
     
-    <form id="registerForm" method="POST" onsubmit="return validateRegisterForm()">
+    <form method="POST" onsubmit="return validateRegisterForm()">
         <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <label>Username: <input type="text" name="username" required></label>
         </div>
         <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <label>Email: <input type="email" name="email" required></label>
         </div>
         <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <label>Password: <input type="password" name="password" required></label>
         </div>
         <div class="form-group">
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
+            <label>Confirm Password: <input type="password" name="confirm_password" required></label>
         </div>
         <button type="submit">Register</button>
     </form>
 </div>
-
-<script>
-function validateRegisterForm() {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm_password').value;
-    
-    if (username.length < 3) {
-        alert('Username must be at least 3 characters long');
-        return false;
-    }
-    
-    if (!email.match(/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/)) {
-        alert('Please enter a valid email address');
-        return false;
-    }
-    
-    if (password.length < 6) {
-        alert('Password must be at least 6 characters long');
-        return false;
-    }
-    
-    if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return false;
-    }
-    
-    return true;
-}
-</script>
