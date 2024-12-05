@@ -5,12 +5,10 @@ require_once 'database.php';
 
 $userId = $_SESSION['user_id'];
 
-// Fetch user information
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-// Fetch user's activity
 $stmt = $pdo->prepare("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC LIMIT 5");
 $stmt->execute([$userId]);
 $recentPosts = $stmt->fetchAll();
@@ -23,7 +21,6 @@ $stmt = $pdo->prepare("SELECT comments.*, posts.title as post_title
 $stmt->execute([$userId]);
 $recentComments = $stmt->fetchAll();
 
-// Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $currentPassword = $_POST['current_password'];
@@ -45,7 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<?php include 'includes/header.php'; ?>
+<?php include 'header.php'; ?>
+
 
 <div class="container">
     <h1>Profile</h1>

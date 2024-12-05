@@ -2,14 +2,16 @@
 require_once 'session.php';
 require_once 'database.php';
 
-$stmt = $pdo->query("SELECT posts.*, users.username FROM posts 
+$stmt = $pdo->query("SELECT posts.*, users.username, categories.name as category_name 
+                     FROM posts 
                      JOIN users ON posts.user_id = users.id 
-                     WHERE posts.category = 'News' 
+                     JOIN categories ON posts.category_id = categories.id
+                     WHERE categories.name = 'News' 
                      ORDER BY posts.created_at DESC");
 $news = $stmt->fetchAll();
-?>
 
-<?php include 'header.php'; ?>
+include 'header.php';
+?>
 
 <div class="container">
     <h1>Latest Motorsport News</h1>
@@ -25,7 +27,6 @@ $news = $stmt->fetchAll();
                 <div class="content">
                     <?php echo nl2br(htmlspecialchars($article['content'])); ?>
                 </div>
-                <a href="/news/<?php echo $article['id']; ?>" class="read-more">Read More</a>
             </div>
         <?php endforeach; ?>
     </div>

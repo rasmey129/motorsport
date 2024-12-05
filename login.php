@@ -1,5 +1,6 @@
-require_once 'includes/session.php';
-require_once 'config/database.php';
+<?php 
+require_once 'session.php';
+require_once 'database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
@@ -21,13 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$token, $user['id']]);
         }
         
-        header('Location: /dashboard.php');
-        exit();
+        header('Location: ' . BASE_URL . '/dashboard.php');        exit();
     }
 }
 ?>
 
-<?php include 'includes/header.php'; ?>
+<?php include 'header.php'; ?>
 
 <div class="container">
     <h1>Login</h1>
@@ -59,8 +59,8 @@ function validateLoginForm() {
         return false;
     }
     
-    if (password.length < 8) {
-        alert('Password must be at least 8 characters long');
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long');
         return false;
     }
     

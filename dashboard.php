@@ -1,19 +1,19 @@
 <?php
 require_once 'session.php';
-requireLogin();
 require_once 'database.php';
+requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'create':
-                $stmt = $pdo->prepare("INSERT INTO posts (user_id, title, content, category) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$_SESSION['user_id'], $_POST['title'], $_POST['content'], $_POST['category']]);
+                $stmt = $pdo->prepare("INSERT INTO posts (user_id, category_id, title, content) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$_SESSION['user_id'], $_POST['category_id'], $_POST['title'], $_POST['content']]);
                 break;
                 
             case 'update':
-                $stmt = $pdo->prepare("UPDATE posts SET title = ?, content = ?, category = ? WHERE id = ? AND user_id = ?");
-                $stmt->execute([$_POST['title'], $_POST['content'], $_POST['category'], $_POST['post_id'], $_SESSION['user_id']]);
+                $stmt = $pdo->prepare("UPDATE posts SET title = ?, content = ?, category_id = ? WHERE id = ? AND user_id = ?");
+                $stmt->execute([$_POST['title'], $_POST['content'], $_POST['category_id'], $_POST['post_id'], $_SESSION['user_id']]);
                 break;
                 
             case 'delete':
@@ -24,12 +24,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = $pdo->prepare("SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC");
+// Fetch categories for dropdown
+$stmt = $pdo->query("SELECT id, name FROM categories");
+$categories = $stmt->fetchAll();
+
+// Fetch user's posts
+$stmt = $pdo->prepare("
+    SELECT posts.*, categories.name as category_name 
+    FROM posts 
+    JOIN categories ON posts.category_id = categories.id 
+    WHERE posts.user_id = ? 
+    ORDER BY created_at DESC
+");
 $stmt->execute([$_SESSION['user_id']]);
 $posts = $stmt->fetchAll();
-?>
 
-<?php include 'header.php'; ?>
+include 'header.php';
+?>
 
 <div class="container">
     <h1>Dashboard</h1>
@@ -43,12 +54,13 @@ $posts = $stmt->fetchAll();
                 <input type="text" id="title" name="title" required>
             </div>
             <div class="form-group">
-                <label for="category">Category:</label>
-                <select id="category" name="category" required>
-                    <option value="F1">Formula 1</option>
-                    <option value="MotoGP">MotoGP</option>
-                    <option value="Rally">Rally</option>
-                    <option value="Other">Other</option>
+                <label for="category_id">Category:</label>
+                <select id="category_id" name="category_id" required>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?php echo $category['id']; ?>">
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-group">
@@ -65,7 +77,7 @@ $posts = $stmt->fetchAll();
             <div class="post">
                 <h3><?php echo htmlspecialchars($post['title']); ?></h3>
                 <p><?php echo htmlspecialchars($post['content']); ?></p>
-                <p class="meta">Category: <?php echo htmlspecialchars($post['category']); ?></p>
+                <p class="meta">Category: <?php echo htmlspecialchars($post['category_name']); ?></p>
                 <div class="actions">
                     <button onclick="editPost(<?php echo $post['id']; ?>)">Edit</button>
                     <form method="POST" style="display: inline;">
@@ -78,26 +90,3 @@ $posts = $stmt->fetchAll();
         <?php endforeach; ?>
     </div>
 </div>
-
-<script>
-function validatePostForm() {
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
-    
-    if (title.length < 5) {
-        alert('Title must be at least 5 characters long');
-        return false;
-    }
-    
-    if (content.length < 20) {
-        alert('Content must be at least 20 characters long');
-        return false;
-    }
-    
-    return true;
-}
-
-function editPost(postId) {
- 
-}
-</script>

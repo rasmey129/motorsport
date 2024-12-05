@@ -1,4 +1,4 @@
-<?php
+ <?php
 $host = 'localhost';
 $dbname = 'motorsport_hub';
 $username = 'root';

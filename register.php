@@ -14,8 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $pdo->lastInsertId();
         $_SESSION['username'] = $username;
         
-        header('Location: /dashboard.php');
-        exit();
+        header('Location: ' . BASE_URL . '/dashboard.php');        exit();
     } catch (PDOException $e) {
         $error = 'Registration failed. Email or username may already exist.';
     }
@@ -68,8 +67,8 @@ function validateRegisterForm() {
         return false;
     }
     
-    if (password.length < 8) {
-        alert('Password must be at least 8 characters long');
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long');
         return false;
     }
     

@@ -108,7 +108,6 @@ const validateProfileForm = () => {
     return true;
 };
 
-// Utility Functions
 const isValidEmail = (email) => {
     const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
     return emailRegex.test(email);
@@ -124,7 +123,6 @@ const showError = (message) => {
     }
 };
 
-// Auto-expanding Textarea
 const initializeExpandingTextareas = () => {
     document.querySelectorAll('textarea[data-expanding]').forEach(textarea => {
         textarea.addEventListener('input', function() {
@@ -134,12 +132,10 @@ const initializeExpandingTextareas = () => {
     });
 };
 
-// Confirmation Dialogs
 const confirmDelete = (type) => {
     return confirm(`Are you sure you want to delete this ${type}?`);
 };
 
-// Preview Post/Comment
 const initializePreview = () => {
     const previewButton = document.getElementById('preview-button');
     const previewArea = document.getElementById('preview-area');
@@ -153,7 +149,6 @@ const initializePreview = () => {
     }
 };
 
-// Simple Markdown-like formatting
 const markdownToHtml = (text) => {
     return text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -161,7 +156,6 @@ const markdownToHtml = (text) => {
         .replace(/\n/g, '<br>');
 };
 
-// Navigation Menu
 const initializeNavigation = () => {
     const menuButton = document.getElementById('menu-toggle');
     const nav = document.querySelector('nav');
@@ -173,7 +167,6 @@ const initializeNavigation = () => {
     }
 };
 
-// Infinite Scroll for Forums/News
 const initializeInfiniteScroll = () => {
     let loading = false;
     const contentContainer = document.querySelector('.infinite-scroll-container');
@@ -209,7 +202,6 @@ const loadMoreContent = async () => {
     }
 };
 
-// Notifications
 const initializeNotifications = () => {
     const notifications = document.querySelectorAll('.notification');
     
@@ -223,7 +215,6 @@ const initializeNotifications = () => {
     });
 };
 
-// Initialize all features when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeExpandingTextareas();
     initializePreview();
@@ -231,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeInfiniteScroll();
     initializeNotifications();
     
-    // Add error message container if not present
     if (!document.getElementById('error-message')) {
         const errorDiv = document.createElement('div');
         errorDiv.id = 'error-message';
@@ -241,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Export functions for use in inline scripts
 window.validateLoginForm = validateLoginForm;
 window.validateRegisterForm = validateRegisterForm;
 window.validatePostForm = validatePostForm;

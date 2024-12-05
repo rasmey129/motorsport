@@ -9,7 +9,6 @@ if (!$postId) {
     exit();
 }
 
-// Fetch post details with author information
 $stmt = $pdo->prepare("
     SELECT 
         posts.*,
@@ -30,7 +29,6 @@ if (!$post) {
     exit();
 }
 
-// Handle new comments
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
@@ -60,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
     }
 }
 
-// Fetch comments with pagination
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $perPage = 10;
 $offset = ($page - 1) * $perPage;
@@ -80,7 +77,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$postId, $perPage, $offset]);
 $comments = $stmt->fetchAll();
 
-// Get total comments for pagination
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE post_id = ?");
 $stmt->execute([$postId]);
 $totalComments = $stmt->fetchColumn();
@@ -90,14 +86,12 @@ $totalPages = ceil($totalComments / $perPage);
 <?php include 'includes/header.php'; ?>
 
 <div class="container">
-    <!-- Breadcrumb navigation -->
     <div class="breadcrumb">
         <a href="/forums.php">Forums</a> &gt; 
         <a href="/forums.php?category=<?php echo urlencode($post['category']); ?>"><?php echo htmlspecialchars($post['category']); ?></a> &gt; 
         <span><?php echo htmlspecialchars($post['title']); ?></span>
     </div>
 
-    <!-- Main post content -->
     <article class="post-full">
         <header class="post-header">
             <h1><?php echo htmlspecialchars($post['title']); ?></h1>
@@ -124,7 +118,6 @@ $totalPages = ceil($totalComments / $perPage);
         <?php endif; ?>
     </article>
 
-    <!-- Comments section -->
     <section class="comments-section" id="comments">
         <h2><?php echo $totalComments; ?> Comments</h2>
 
@@ -148,7 +141,6 @@ $totalPages = ceil($totalComments / $perPage);
         </div>
         <?php endif; ?>
 
-        <!-- Comments list -->
         <div class="comments-list">
             <?php foreach ($comments as $comment): ?>
             <div class="comment" id="comment-<?php echo $comment['id']; ?>">
@@ -176,7 +168,6 @@ $totalPages = ceil($totalComments / $perPage);
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
         <?php if ($totalPages > 1): ?>
         <div class="pagination">
             <?php if ($page > 1): ?>
@@ -216,7 +207,6 @@ function validateCommentForm() {
     return true;
 }
 
-// Auto-expand textarea as user types
 document.getElementById('content')?.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight) + 'px';

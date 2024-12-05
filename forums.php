@@ -34,7 +34,7 @@ $posts = $stmt->fetchAll();
         <a href="/forums.php" class="<?php echo $category === 'all' ? 'active' : ''; ?>">All</a>
         <a href="/forums.php?category=F1" class="<?php echo $category === 'F1' ? 'active' : ''; ?>">Formula 1</a>
         <a href="/forums.php?category=MotoGP" class="<?php echo $category === 'MotoGP' ? 'active' : ''; ?>">MotoGP</a>
-        <a href="/forums.php?category=Rally" class="<?php echo $category === 'Rally' ? 'active' : ''; ?>">Rally</a>
+        <a href="/forums.php?category=Rally" class="<?php echo $category === 'WRC' ? 'active' : ''; ?>">Rally</a>
     </div>
     
     <?php if (isLoggedIn()): ?>
